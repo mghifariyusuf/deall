@@ -1,0 +1,28 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: app-mysql
+  labels:
+    app: app-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-mysql
+  template:
+    metadata:
+      labels:
+        app: app-mysql
+    spec:
+      containers:
+        - name: app-mysql 
+          image: abrohah7/boilerplate:1.0.6
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 4000
+          envFrom:
+            - secretRef:
+                name: mysql-secret
+            - secretRef:
+                name: redis-secret

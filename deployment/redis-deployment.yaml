@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      tier: redis
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        tier: redis
+    spec:
+      containers:
+        - image: redis
+          name: redis
+          imagePullPolicy: "IfNotPresent"
+
+          envFrom:
+          - secretRef:
+              name: redis-secret
+
+          ports:
+          - containerPort: 6379
+            name: redis
+
+          volumeMounts:
+            - mountPath: /data
+              name: redis-persistent-storage
+      volumes:
+      - name: redis-persistent-storage
+        persistentVolumeClaim:
+          claimName: redis-pv-claim
+
+        
